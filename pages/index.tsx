@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 const orientationLockIfNeeded = () => {
   const needLock = window.innerWidth < 500 || window.innerHeight < 500;
   console.log(`needLock: ${needLock}`);
+  console.log(screen.orientation);
 
   try {
     if (needLock && screen.orientation.type.startsWith('landscape')) {
