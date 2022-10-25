@@ -44,7 +44,10 @@ const Home: NextPage = () => {
       orientationLockIfNeeded();
     };
 
-    window.onresize = () => {};
+    window.onresize = () => {
+      console.log('onresize');
+      orientationLockIfNeeded();
+    };
 
     screen.orientation.onchange = () => {
       orientationLockIfNeeded();
