@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 const orientationLockIfNeeded = () => {
   const needLock = window.innerWidth < 500 || window.innerHeight < 500;
+  console.log(`needLock: ${needLock}`);
 
   try {
     if (needLock && screen.orientation.type.startsWith('landscape')) {
@@ -25,13 +26,13 @@ const orientationLockIfNeeded = () => {
 };
 
 const Home: NextPage = () => {
-  const [content, setContent] = useState<string[]>([]);
   useEffect(() => {
     orientationLockIfNeeded();
   }, []);
 
   useEffect(() => {
     window.onfocus = () => {
+      console.log('onfocus');
       orientationLockIfNeeded();
     };
 
@@ -50,17 +51,9 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='overflow-y-auto'>
-        <button
-          className='w-20 h-20 text-lg font-semibold bg-green-400'
-          onClick={() => setContent([])}
-        >
+        <button className={`w-20 h-20 text-lg font-semibold bg-green-400`}>
           reset
         </button>
-        <div>
-          {content.map((item, idx) => (
-            <div key={idx}>{item}</div>
-          ))}
-        </div>
       </div>
     </>
   );
