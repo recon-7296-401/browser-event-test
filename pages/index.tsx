@@ -1,29 +1,46 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-const Home: NextPage = () => {
-  const [content, setContent] = useState('');
-  useEffect(() => {
-    window.addEventListener('focus', () => {
-      setContent(
-        `${content}<br>focus: ${window.innerWidth}, ${window.innerHeight}`
-      );
-    });
+const orientationLockIfNeeded = () => {
+  const needLock = window.innerWidth < 500 || window.innerHeight < 500;
 
-    window.addEventListener('resize', () => {
-      setContent(
-        `${content}<br>resize: ${window.innerWidth}, ${window.innerHeight}`
-      );
-    });
+  try {
+    if (needLock && screen.orientation.type.startsWith('landscape')) {
+      document.documentElement
+        .requestFullscreen()
+        .then(() => {
+          screen.orientation.lock('portrait');
+        })
+        .catch(console.error);
+    } else {
+      if (!needLock) {
+        screen.orientation.unlock();
+        if (document.fullscreenElement) document.exitFullscreen();
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+const Home: NextPage = () => {
+  const [content, setContent] = useState<string[]>([]);
+  useEffect(() => {
+    orientationLockIfNeeded();
+  }, []);
+
+  useEffect(() => {
+    window.onfocus = () => {
+      orientationLockIfNeeded();
+    };
+
+    window.onresize = () => {};
 
     screen.orientation.onchange = () => {
-      setContent(
-        `${content}<br>orientationchange: ${window.innerWidth}, ${window.innerHeight}`
-      );
+      orientationLockIfNeeded();
     };
-  });
+  }, []);
 
   return (
     <>
@@ -35,11 +52,15 @@ const Home: NextPage = () => {
       <div className='overflow-y-auto'>
         <button
           className='w-20 h-20 text-lg font-semibold bg-green-400'
-          onClick={() => setContent('')}
+          onClick={() => setContent([])}
         >
           reset
         </button>
-        <div dangerouslySetInnerHTML={{ __html: content }}></div>
+        <div>
+          {content.map((item, idx) => (
+            <div key={idx}>{item}</div>
+          ))}
+        </div>
       </div>
     </>
   );
