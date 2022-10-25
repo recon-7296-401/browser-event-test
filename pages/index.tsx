@@ -5,10 +5,17 @@ import { useEffect, useState } from 'react';
 const orientationLockIfNeeded = () => {
   const needLock = window.innerWidth < 500 || window.innerHeight < 500;
   console.log(`needLock: ${needLock}`);
+  console.log(
+    `innerwidth: ${window.innerWidth}, innerHeight: ${window.innerHeight}`
+  );
   console.log(screen.orientation);
 
   try {
-    if (needLock && screen.orientation.type.startsWith('landscape')) {
+    if (
+      needLock &&
+      (screen.orientation.type.startsWith('landscape') ||
+        window.innerHeight < 500)
+    ) {
       document.documentElement
         .requestFullscreen()
         .then(() => {
